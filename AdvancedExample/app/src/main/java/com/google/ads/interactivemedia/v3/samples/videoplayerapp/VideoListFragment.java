@@ -37,6 +37,7 @@ public class VideoListFragment extends Fragment {
     private OnVideoSelectedListener mListener;
 
     public VideoListItem[] getVideoListItems() {
+
         return new VideoListItem[] {
             new VideoListItem("Live Video - Big Buck Bunny", "sN_IYUG8STe1ZzhIIE_ksA", null, null,
                     null, StreamFormat.HLS, null),
@@ -49,6 +50,8 @@ public class VideoListFragment extends Fragment {
             new VideoListItem("BBB-widevine", null, null,
                    "2474148", "bbb-widevine", StreamFormat.DASH,
                     "https://proxy.uat.widevine.com/proxy"),
+            new VideoListItem("VOD - ima-test", null, null, "19823", "ima-test",
+                        StreamFormat.HLS, null),
         };
     }
 

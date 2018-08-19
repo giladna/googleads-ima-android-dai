@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
+import com.google.ads.interactivemedia.v3.samples.videoplayerapp.VideoListFragment;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -61,6 +62,7 @@ public class SampleVideoPlayer {
 
     // The UUID uniquely identifying the Widevine DRM scheme.
     private static final String WIDEVINE_UUID = "edef8ba9-79d6-4ace-a3c8-27dcd51d21ed";
+
 
     /**
      * Video player callback to be called when TXXX ID3 tag is received or seeking occurs.
@@ -141,6 +143,10 @@ public class SampleVideoPlayer {
                 return false;
             }
         });
+    }
+
+    public void stop() {
+        mPlayer.stop();
     }
 
     public void play() {

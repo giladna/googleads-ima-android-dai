@@ -30,6 +30,7 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.google.ads.interactivemedia.v3.api.StreamRequest;
 import com.google.ads.interactivemedia.v3.samples.samplevideoplayer.SampleVideoPlayer;
 
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -50,6 +51,7 @@ public class MyActivity extends AppCompatActivity {
     private static final String FALLBACK_STREAM_URL =
             "http://storage.googleapis.com/testtopbox-public/video_content/bbb/master.m3u8";
     private static final String APP_LOG_TAG = "ImaDaiExample";
+    public static final String TAG = "MainActivity";
 
     private SampleVideoPlayer mVideoPlayer;
     private SampleAdsWrapper mSampleAdsWrapper;
@@ -60,6 +62,10 @@ public class MyActivity extends AppCompatActivity {
 
     private CastApplication mCastApplication;
     private SeekBar mSeekBar;
+
+    private TextView descTextView;
+    private ScrollView scrollView;
+    private TextView logTextView;
 
     // Set up a default CookieManager to handle streams that requir cookies to be passed along to
     // subsequent requests.
@@ -180,7 +186,8 @@ public class MyActivity extends AppCompatActivity {
                     mVideoListItem = videoListItem;
                     mCastApplication.setVideoListItem(mVideoListItem);
                 }
-    };
+
+            };
 
     private VideoFragmentListener mVideoFragmentListener = new VideoFragmentListener() {
         @Override
@@ -192,9 +199,9 @@ public class MyActivity extends AppCompatActivity {
                     mVideoPlayer, (ViewGroup) rootView.findViewById(R.id.adUiContainer));
             mSampleAdsWrapper.setFallbackUrl(FALLBACK_STREAM_URL);
 
-            final TextView descTextView = rootView.findViewById(R.id.playerDescription);
-            final ScrollView scrollView = rootView.findViewById(R.id.logScroll);
-            final TextView logTextView = rootView.findViewById(R.id.logText);
+            descTextView = rootView.findViewById(R.id.playerDescription);
+            scrollView = rootView.findViewById(R.id.logScroll);
+            logTextView = rootView.findViewById(R.id.logText);
 
             if (descTextView != null) {
                 descTextView.setText(mVideoListItem.getTitle());
@@ -257,7 +264,26 @@ public class MyActivity extends AppCompatActivity {
                 mBookmarks.put(mVideoListItem.getId(), mSampleAdsWrapper.getContentTime());
             }
         }
+
+        @Override
+        public void onVideoFragmentUpdated(VideoListFragment.VideoListItem item) {
+            mVideoPlayer.stop();
+            mSampleAdsWrapper.requestAndPlayAds(item, 0);
+        }
     };
+
+    public void changeMedia(View view) {
+        if (mVideoPlayer.isPlaying()) {
+            Log.d(TAG, "Change Media Clicked");
+            VideoListFragment.VideoListItem item = new VideoListFragment.VideoListItem("VOD - Tears of Steel", null, null, "19463", "tears-of-steel",
+                    StreamRequest.StreamFormat.HLS, null);
+
+            mVideoFragmentListener.onVideoFragmentUpdated(item);
+            if (descTextView != null) {
+                descTextView.setText(item.getTitle());
+            }
+        }
+    }
 
     /**
      * Interface for Activity to respond to Fragment lifecyle events.
@@ -266,6 +292,7 @@ public class MyActivity extends AppCompatActivity {
         void onVideoFragmentCreated(View rootView);
         void onVideoFragmentDestroyed();
         void onVideoFragmentPaused();
+        void onVideoFragmentUpdated(VideoListFragment.VideoListItem item);
     }
 
     /**

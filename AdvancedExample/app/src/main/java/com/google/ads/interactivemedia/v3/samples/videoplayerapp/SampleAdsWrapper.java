@@ -45,6 +45,8 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
         AdsLoader.AdsLoadedListener {
 
     private static final String PLAYER_TYPE = "DAISamplePlayer";
+    private static final String TAG = "SampleAdsWrapper";
+    private boolean isFirstTimeAdIsPlayedInPlayList = true;
 
     /**
      * Log interface, so we can output the log commands to the UI or similar.
@@ -90,15 +92,21 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
         ImaSdkSettings settings = ImaSdkFactory.getInstance().createImaSdkSettings();
         // Change any settings as necessary here.
         settings.setPlayerType(PLAYER_TYPE);
-        mAdsLoader = mSdkFactory.createAdsLoader(mContext);
+        settings.setLanguage("en");
+        settings.setDebugMode(true);
+        mAdsLoader = mSdkFactory.createAdsLoader(mContext,settings);
     }
 
     public void requestAndPlayAds(VideoListFragment.VideoListItem videoListItem,
                                   double bookMarkTime) {
 
         mBookMarkContentTime = bookMarkTime;
-        mAdsLoader.addAdErrorListener(this);
-        mAdsLoader.addAdsLoadedListener(this);
+        if (isFirstTimeAdIsPlayedInPlayList) {
+            mAdsLoader.addAdErrorListener(this);
+            mAdsLoader.addAdsLoadedListener(this);
+        } else {
+            mAdsLoader.contentComplete(); //???? has no influance with or without
+        }
         mAdsLoader.requestStream(buildStreamRequest(videoListItem));
         mAdsRequested = true;
     }
@@ -141,9 +149,11 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
                     mVideoPlayer.seekTo(windowIndex, Math.round(timeToSeek));
                 }
             });
-        mDisplayContainer.setVideoStreamPlayer(videoStreamPlayer);
-        mDisplayContainer.setAdContainer(mAdUiContainer);
+        if (isFirstTimeAdIsPlayedInPlayList) {
+            mDisplayContainer.setVideoStreamPlayer(videoStreamPlayer);
+            mDisplayContainer.setAdContainer(mAdUiContainer);
 
+        }
         StreamRequest request;
         // Live stream request.
         if (videoListItem.getAssetKey() != null) {
@@ -172,6 +182,11 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
                             mStreamManager.getStreamTimeForContentTime(mBookMarkContentTime);
                     mVideoPlayer.seekTo((long) (streamTime * 1000.0)); // s to ms.
                 }
+            }
+
+            @Override
+            public int getVolume() {
+                return 100  ;
             }
 
             @Override
@@ -264,6 +279,13 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
     /** AdsLoadedListener implementation **/
     @Override
     public void onAdsManagerLoaded(AdsManagerLoadedEvent event) {
+        if (mStreamManager != null) {
+            mStreamManager.removeAdEventListener(this);
+            mStreamManager.removeAdErrorListener(this);
+            mStreamManager.destroy();
+            mStreamManager = null;
+        }
+        isFirstTimeAdIsPlayedInPlayList = false;
         mStreamManager = event.getStreamManager();
         mStreamManager.addAdErrorListener(this);
         mStreamManager.addAdEventListener(this);
@@ -287,6 +309,7 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
     }
 
     public void release() {
+        isFirstTimeAdIsPlayedInPlayList = true;
         if (mStreamManager != null) {
             mStreamManager.destroy();
         }
