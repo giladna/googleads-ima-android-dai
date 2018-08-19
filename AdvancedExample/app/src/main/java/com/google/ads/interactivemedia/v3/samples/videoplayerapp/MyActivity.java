@@ -277,6 +277,7 @@ public class MyActivity extends AppCompatActivity {
     public void changeMedia(View view) {
         if (mVideoPlayer.isPlaying()) {
             Log.d(TAG, "Change Media Clicked");
+            logTextView.append("----" + "Change Media Clicked" + "----\n");
             VideoListFragment.VideoListItem item = new VideoListFragment.VideoListItem("VOD - Tears of Steel", null, null, "19463", "tears-of-steel",
                     StreamRequest.StreamFormat.HLS, null);
 
