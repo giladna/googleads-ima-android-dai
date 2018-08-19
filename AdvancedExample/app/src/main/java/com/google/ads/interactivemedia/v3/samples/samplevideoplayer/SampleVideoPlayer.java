@@ -243,6 +243,9 @@ public class SampleVideoPlayer {
     }
 
     public boolean isPlaying() {
+        if (mPlayer == null) {
+            return false;
+        }
         return mPlayer.getPlayWhenReady();
     }
 
@@ -268,6 +271,9 @@ public class SampleVideoPlayer {
     }
 
     public long getDuration() {
+        if (mPlayer == null) {
+            return 0L;
+        }
         return mPlayer.getDuration();
     }
 

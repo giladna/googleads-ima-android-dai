@@ -270,6 +270,12 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
         switch (event.getType()) {
             case AD_PROGRESS:
                 break; // Do nothing
+            case CUEPOINTS_CHANGED:
+                if (mStreamManager != null && mStreamManager.getCuePoints() != null && mVideoPlayer != null && mVideoPlayer.getDuration() <= 0) {
+                    for (CuePoint cue : mStreamManager.getCuePoints()) {
+                        log(String.format("Cue: %s\n", cue.getStartTime() + " " + cue.getEndTime() + " " + cue.isPlayed()));
+                    }
+                }
             default:
                 log(String.format("Event: %s\n", event.getType()));
                 break;

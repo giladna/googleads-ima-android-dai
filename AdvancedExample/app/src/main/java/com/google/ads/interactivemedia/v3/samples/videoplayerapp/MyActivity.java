@@ -275,7 +275,7 @@ public class MyActivity extends AppCompatActivity {
     };
 
     public void changeMedia(View view) {
-        if (mVideoPlayer.isPlaying()) {
+        if (mVideoPlayer != null && mVideoPlayer.isPlaying()) {
             Log.d(TAG, "Change Media Clicked");
             if (logTextView != null) {
                 logTextView.append("----" + "Change Media Clicked" + "----\n");
