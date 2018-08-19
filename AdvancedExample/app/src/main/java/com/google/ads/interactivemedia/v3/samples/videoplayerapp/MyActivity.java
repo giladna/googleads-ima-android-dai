@@ -38,6 +38,8 @@ import com.google.android.gms.cast.framework.CastButtonFactory;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -212,7 +214,7 @@ public class MyActivity extends AppCompatActivity {
                 public void log(String logMessage) {
                     Log.i(APP_LOG_TAG, logMessage);
                     if (logTextView != null) {
-                        logTextView.append(logMessage);
+                        logTextView.append(getCurrentTimeStamp() + " " + logMessage);
                     }
                     if (scrollView != null) {
                         scrollView.post(new Runnable() {
@@ -283,6 +285,13 @@ public class MyActivity extends AppCompatActivity {
                 descTextView.setText(item.getTitle());
             }
         }
+    }
+
+    public String getCurrentTimeStamp() {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+        return strDate;
     }
 
     /**
