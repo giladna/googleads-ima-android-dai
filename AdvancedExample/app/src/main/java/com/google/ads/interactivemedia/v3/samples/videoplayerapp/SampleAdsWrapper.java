@@ -47,7 +47,7 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
     private static final String PLAYER_TYPE = "DAISamplePlayer";
     private static final String TAG = "SampleAdsWrapper";
     private boolean isFirstTimeAdIsPlayedInPlayList = true;
-
+    private VideoStreamPlayer videoStreamPlayer;
     /**
      * Log interface, so we can output the log commands to the UI or similar.
      */
@@ -105,6 +105,8 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
             mAdsLoader.addAdErrorListener(this);
             mAdsLoader.addAdsLoadedListener(this);
         } else {
+            mBookMarkContentTime = 0;
+            mSnapBackTime = 0;
             mAdsLoader.contentComplete(); //???? has no influance with or without
         }
         mAdsLoader.requestStream(buildStreamRequest(videoListItem));
@@ -113,7 +115,8 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
 
     private StreamRequest buildStreamRequest(VideoListFragment.VideoListItem videoListItem) {
 
-        VideoStreamPlayer videoStreamPlayer = createVideoStreamPlayer();
+        if (isFirstTimeAdIsPlayedInPlayList) {
+        videoStreamPlayer = createVideoStreamPlayer();
 
         // Set the license URL.
         mVideoPlayer.setLicenseUrl(videoListItem.getLicenseUrl());
@@ -149,11 +152,11 @@ public class SampleAdsWrapper implements AdEvent.AdEventListener, AdErrorEvent.A
                     mVideoPlayer.seekTo(windowIndex, Math.round(timeToSeek));
                 }
             });
-        if (isFirstTimeAdIsPlayedInPlayList) {
+
             mDisplayContainer.setVideoStreamPlayer(videoStreamPlayer);
             mDisplayContainer.setAdContainer(mAdUiContainer);
-
         }
+
         StreamRequest request;
         // Live stream request.
         if (videoListItem.getAssetKey() != null) {

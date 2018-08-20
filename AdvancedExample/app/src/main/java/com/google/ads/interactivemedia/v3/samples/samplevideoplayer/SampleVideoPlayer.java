@@ -146,7 +146,7 @@ public class SampleVideoPlayer {
     }
 
     public void stop() {
-        mPlayer.stop();
+        mPlayer.stop(true);
     }
 
     public void play() {
